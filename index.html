@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>TikTeki - Net Çalışan Sürüm</title>
+    <title>TikTeki - Ultimate TikTok Experience</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
@@ -26,19 +26,9 @@
 
         /* GİRİŞ EKRANI */
         #authScreen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: #000;
-            z-index: 999999999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 30px;
-            text-align: center;
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; z-index: 999999999; display: flex; flex-direction: column;
+            justify-content: center; align-items: center; padding: 30px; text-align: center;
         }
         .auth-logo-box { margin-bottom: 25px; }
         .auth-logo-box i { font-size: 56px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
@@ -78,7 +68,7 @@
         .video-card { width: 100%; height: 100%; scroll-snap-align: start; position: relative; display: flex; align-items: center; justify-content: center; background: #000; }
         .video-card video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* SAĞ MENÜ */
+        /* SAĞ ETKİLEŞİM PANELİ */
         .sidebar-right { position: absolute; right: 12px; bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; z-index: 80; }
         .avatar-box { position: relative; margin-bottom: 6px; cursor: pointer; }
         .avatar-box img { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; }
@@ -98,7 +88,7 @@
         .video-bottom-info p { font-size: 13px; color: #f4f4f5; margin-bottom: 8px; line-height: 1.3; }
         .music-bar { font-size: 12px; display: flex; align-items: center; gap: 8px; font-weight: 600; color: #e4e4e7; }
 
-        /* ALT MENÜ */
+        /* ALT NAVİGASYON */
         .bottom-navbar { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: #000; border-top: 1px solid rgba(255,255,255,0.15); display: flex; justify-content: space-around; align-items: center; z-index: 9999; padding-bottom: env(safe-area-inset-bottom); }
         .nav-link { background: none; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; cursor: pointer; font-size: 10px; font-weight: 600; gap: 3px; width: 20%; height: 100%; justify-content: center; }
         .nav-link i { font-size: 20px; pointer-events: none; }
@@ -110,7 +100,7 @@
         .tiktok-add-btn::after { content: ''; position: absolute; right: -3px; width: 38px; height: 28px; background: var(--accent-pink); border-radius: 8px; z-index: -2; }
         .tiktok-add-btn i { color: #000; font-size: 16px; font-weight: 900; }
 
-        /* KAMERA */
+        /* CANLI KAMERA EKRANI */
         .camera-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: none; flex-direction: column; justify-content: space-between; padding: 16px; }
         .camera-preview { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; transform: scaleX(-1); }
         .cam-top-bar { position: relative; z-index: 10; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
@@ -131,7 +121,7 @@
         .cam-bottom-tabs { display: flex; gap: 25px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,0.6); }
         .cam-bottom-tabs span.active { color: #fff; }
 
-        /* YORUMLAR */
+        /* YORUMLAR ÇEKMECESİ */
         .comments-drawer { position: absolute; bottom: 0; left: 0; width: 100%; height: 65%; background: #161618; border-top-left-radius: 20px; border-top-right-radius: 20px; z-index: 20000; display: none; flex-direction: column; padding: 16px; animation: slideUp 0.3s ease; }
         @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
         .comments-list { flex: 1; overflow-y: auto; margin-bottom: 12px; display: flex; flex-direction: column; gap: 14px; }
@@ -139,7 +129,7 @@
         .comment-item img { width: 36px; height: 36px; border-radius: 50%; object-fit: cover; }
         .comment-input-box { display: flex; gap: 8px; align-items: center; }
 
-        /* YÜKLENİYOR */
+        /* YÜKLENİYOR OVERLAY */
         .uploading-overlay { position: absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.85); z-index:30000; display:none; flex-direction:column; justify-content:center; align-items:center; gap:15px; color:#fff; font-weight:bold; }
         .spinner { width: 50px; height: 50px; border: 5px solid rgba(255,255,255,0.2); border-top-color: var(--accent-pink); border-radius: 50%; animation: spin 1s linear infinite; }
 
@@ -239,7 +229,7 @@
             <button class="nav-link" onclick="openModal('profileModal')"><i class="fa-solid fa-user"></i><span>Profil</span></button>
         </div>
 
-        <!-- KAMERA EKRANI -->
+        <!-- CANLI KAMERA EKRANI -->
         <div class="camera-screen" id="cameraScreen">
             <video class="camera-preview" id="camPreview" autoplay playsinline muted></video>
             <div class="cam-top-bar">
@@ -260,4 +250,5 @@
                         <i class="fa-solid fa-image" style="color:#fff; font-size:20px;"></i>
                         <input type="file" accept="video/*,image/*" style="display:none;" onchange="handleGalleryUpload(event)">
                     </label>
-                    <div class="record-outer-ring" id="recordBtn" onclick="toggleRecording()"><div class="record-
+                    <div class="record-outer-ring" id="recordBtn" onclick="toggleRecording()"><div class="record-inner-circle"></div></div>
+                    <div styl
