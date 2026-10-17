@@ -27,14 +27,12 @@ HTML_TEMPLATE = """
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; }
         body { background: var(--bg-primary); color: var(--text-main); min-height: 100vh; display: flex; overflow-x: hidden; }
 
-        /* Arka Plan Neon Efektleri */
         .glow { position: fixed; border-radius: 50%; filter: blur(120px); z-index: -1; opacity: 0.25; animation: pulseGlow 12s infinite alternate ease-in-out; }
         .glow-1 { top: -100px; left: -100px; width: 500px; height: 500px; background: var(--accent-pink); }
         .glow-2 { bottom: -100px; right: -100px; width: 600px; height: 600px; background: var(--accent-cyan); }
         .glow-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: var(--accent-purple); }
         @keyframes pulseGlow { 0% { transform: scale(1) translate(0, 0); } 100% { transform: scale(1.2) translate(30px, -30px); } }
 
-        /* Sol Menü (Sidebar) */
         .sidebar { width: 290px; background: rgba(12, 18, 34, 0.85); backdrop-filter: blur(20px); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 25px; position: fixed; height: 100vh; z-index: 100; }
         .logo { font-size: 30px; font-weight: 900; background: linear-gradient(45deg, var(--accent-pink), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; letter-spacing: -1px; }
         .logo i { -webkit-text-fill-color: initial; color: var(--accent-pink); text-shadow: 0 0 15px var(--accent-pink); }
@@ -46,7 +44,6 @@ HTML_TEMPLATE = """
         .menu-item.active { background: linear-gradient(90deg, rgba(255,0,80,0.2), rgba(0,242,254,0.05)); color: #fff; border-color: rgba(255,0,80,0.3); box-shadow: 0 4px 20px rgba(255,0,80,0.15); }
         .menu-item i { font-size: 16px; width: 22px; color: var(--accent-pink); }
 
-        /* Ana İçerik */
         .main-content { margin-left: 290px; flex: 1; padding: 35px; max-width: calc(100% - 290px); animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -59,14 +56,12 @@ HTML_TEMPLATE = """
         .card { background: var(--bg-card); backdrop-filter: blur(16px); border-radius: 20px; padding: 28px; border: 1px solid var(--border-color); box-shadow: 0 20px 40px rgba(0,0,0,0.4); margin-bottom: 25px; }
         .card-title { font-size: 17px; font-weight: 700; color: #38bdf8; margin-bottom: 18px; display: flex; align-items: center; gap: 10px; }
 
-        /* İstatistik Kartları */
         .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .stat-card { background: rgba(12, 18, 34, 0.7); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; text-align: center; position: relative; overflow: hidden; }
         .stat-card::before { content:''; position: absolute; top:0; left:0; width:100%; height:3px; background: linear-gradient(90deg, var(--accent-pink), var(--accent-cyan)); }
         .stat-card h4 { font-size: 26px; font-weight: 800; color: var(--accent-cyan); margin-bottom: 4px; }
         .stat-card p { font-size: 12px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 700; }
 
-        /* Input & Butonlar */
         .input-box { display: flex; gap: 12px; margin-bottom: 20px; }
         input[type="text"], input[type="number"], select { width: 100%; padding: 14px 18px; border-radius: 12px; border: 1px solid var(--border-color); background: rgba(5, 7, 15, 0.8); color: #fff; font-size: 15px; outline: none; transition: all 0.3s; }
         input:focus, select:focus { border-color: var(--accent-pink); box-shadow: 0 0 15px rgba(255, 0, 80, 0.25); }
@@ -74,7 +69,6 @@ HTML_TEMPLATE = """
         button { padding: 14px 26px; background: linear-gradient(135deg, var(--accent-pink), #ff5e62); border: none; border-radius: 12px; color: white; font-weight: bold; font-size: 14px; cursor: pointer; transition: all 0.3s; box-shadow: 0 8px 20px rgba(255, 0, 80, 0.3); white-space: nowrap; display: flex; align-items: center; gap: 8px; justify-content: center; }
         button:hover { opacity: 0.95; transform: translateY(-2px); box-shadow: 0 12px 25px rgba(255, 0, 80, 0.4); }
 
-        /* Profil Kartı */
         .profile-container { display: none; align-items: center; gap: 20px; background: rgba(5, 7, 15, 0.9); padding: 20px; border-radius: 16px; border: 1px solid var(--border-color); margin-top: 20px; }
         .profile-pic { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--accent-pink); object-fit: cover; box-shadow: 0 0 20px rgba(255,0,80,0.4); }
         .profile-info h3 { font-size: 20px; color: #fff; margin-bottom: 4px; }
@@ -85,16 +79,13 @@ HTML_TEMPLATE = """
         .badge-offline { background: rgba(245, 158, 11, 0.15); color: #f59e0b; border: 1px solid rgba(245, 158, 11, 0.3); }
         .badge-error { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
 
-        /* Kural Listesi */
         .rule-form { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px; }
         .rule-list { margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
         .rule-item { background: rgba(5, 7, 15, 0.8); padding: 16px 20px; border-radius: 14px; border-left: 4px solid var(--accent-pink); display: flex; justify-content: space-between; align-items: center; font-size: 14px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
 
-        /* Canlı Akış Konsolu */
         .live-log-box { background: rgba(5, 7, 15, 0.95); border: 1px solid var(--border-color); border-radius: 14px; height: 220px; overflow-y: auto; padding: 15px; font-family: monospace; font-size: 13px; color: #a7f3d0; margin-top: 15px; }
         .log-entry { margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
 
-        /* Çarkıfelek */
         .wheel-demo { width: 180px; height: 180px; border-radius: 50%; border: 8px solid var(--accent-pink); margin: 20px auto; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--accent-cyan); background: conic-gradient(#ff0050 0deg 90deg, #7928ca 90deg 180deg, #00f2fe 180deg 270deg, #10b981 270deg 360deg); animation: spinWheel 10s infinite linear; box-shadow: 0 0 30px rgba(0,242,254,0.3); }
         @keyframes spinWheel { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
 
@@ -112,7 +103,6 @@ HTML_TEMPLATE = """
     <div class="glow glow-2"></div>
     <div class="glow glow-3"></div>
 
-    <!-- SIDEBAR NAVIGATION -->
     <div class="sidebar">
         <div class="logo"><i class="fa-solid fa-bolt"></i><span>TikTeki</span></div>
         <div class="menu-items">
@@ -133,10 +123,8 @@ HTML_TEMPLATE = """
         </div>
     </div>
 
-    <!-- MAIN WORKSPACE -->
     <div class="main-content">
         
-        <!-- 1. KONTROL PANELİ -->
         <div id="tab-home" class="tab-content active">
             <div class="header-title">
                 <span><i class="fa-solid fa-gauge-high" style="color:var(--accent-cyan);"></i> Yayın Stüdyosu & Canlı Analiz</span>
@@ -168,7 +156,6 @@ HTML_TEMPLATE = """
             </div>
         </div>
 
-        <!-- 2. OTOMASYONLAR & KURALLAR -->
         <div id="tab-rules" class="tab-content">
             <div class="header-title"><span><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent-pink);"></i> Hediye & Etkileşim Otomasyon Motoru</span></div>
             <div class="card">
@@ -203,7 +190,6 @@ HTML_TEMPLATE = """
             </div>
         </div>
 
-        <!-- 3. CANLI YAYIN AKIŞ LOGLARI -->
         <div id="tab-feed" class="tab-content">
             <div class="header-title"><span><i class="fa-solid fa-stream" style="color:var(--accent-green);"></i> Anlık Hediye & Chat Konsolu</span></div>
             <div class="card">
@@ -215,7 +201,6 @@ HTML_TEMPLATE = """
             </div>
         </div>
 
-        <!-- 4. ÇARKI FELEK & OYUNLAR -->
         <div id="tab-games" class="tab-content">
             <div class="header-title"><span><i class="fa-solid fa-dharmachakra" style="color:var(--accent-cyan);"></i> Canlı Yayın Çarkıfelek Widget'ı</span></div>
             <div class="card" style="text-align:center;">
@@ -225,7 +210,6 @@ HTML_TEMPLATE = """
             </div>
         </div>
 
-        <!-- 5. MINECRAFT / WEBHOOK -->
         <div id="tab-minecraft" class="tab-content">
             <div class="header-title"><span><i class="fa-cube" style="color:var(--accent-purple);"></i> Minecraft Server Entegrasyonu (Aternos / PaperMC)</span></div>
             <div class="card">
@@ -238,7 +222,6 @@ HTML_TEMPLATE = """
             </div>
         </div>
 
-        <!-- 6. CHAT BOT -->
         <div id="tab-chatbot" class="tab-content">
             <div class="header-title"><span><i class="fa-solid fa-robot" style="color:#f59e0b;"></i> Chat Bot & Otomatik Duyurular</span></div>
             <div class="card">
@@ -249,7 +232,6 @@ HTML_TEMPLATE = """
             </div>
         </div>
 
-        <!-- 7. OBS OVERLAYS -->
         <div id="tab-overlays" class="tab-content">
             <div class="header-title"><span><i class="fa-solid fa-desktop" style="color:var(--accent-cyan);"></i> OBS Studio Katman Linkleri</span></div>
             <div class="card">
@@ -264,7 +246,6 @@ HTML_TEMPLATE = """
             </div>
         </div>
 
-        <!-- 8. TTS & SOUNDBOARD -->
         <div id="tab-tts" class="tab-content">
             <div class="header-title"><span><i class="fa-solid fa-volume-high" style="color:var(--accent-pink);"></i> Gelişmiş TTS & Efekt Ses Tahtası</span></div>
             <div class="card">
@@ -274,4 +255,20 @@ HTML_TEMPLATE = """
                     <option>Türkçe - Karizmatik Erkek Sesi</option>
                     <option>Robotik / Helyum Efektli Ses</option>
                 </select>
-                <button onclick="alert('Ses motoru test edildi!')"><i class="fa-solid fa-play"></i> Test Sesi Di
+                <button onclick="alert('Ses motoru test edildi!')"><i class="fa-solid fa-play"></i> Test Sesi Dinle</button>
+            </div>
+        </div>
+
+        <div id="tab-settings" class="tab-content">
+            <div class="header-title"><span><i class="fa-solid fa-sliders"></i> Sistem Ayarları & API Keys</span></div>
+            <div class="card">
+                <div class="card-title">Sistem Yapılandırması</div>
+                <input type="text" placeholder="Sistem Yetki Anahtarı (API Token)" style="margin-bottom:12px;">
+                <button onclick="alert('Tüm ayarlar kaydedildi!')"><i class="fa-solid fa-floppy-disk"></i> Kaydet</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        function switchTab
