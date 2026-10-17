@@ -14,7 +14,7 @@
             --accent-cyan: #25f4ee;
             --text-white: #ffffff;
             --text-muted: #8a8b91;
-            --border-color: rgba(255, 255, 255, 0.12);
+            --border-color: rgba(255, 255, 255, 0.15);
             --card-bg: #121212;
         }
 
@@ -24,14 +24,15 @@
 
         .app-shell { width: 100%; height: 100%; max-width: 480px; margin: 0 auto; background: #000; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
 
-        /* GİRİŞ EKRANI */
-        .auth-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 50000; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 40px 24px; text-align: center; }
-        .auth-logo-area { margin-top: 60px; }
-        .auth-logo-area h1 { font-size: 38px; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 10px; }
-        .auth-logo-area p { color: var(--text-muted); font-size: 14px; line-height: 1.4; }
-        .auth-buttons-box { width: 100%; display: flex; flex-direction: column; gap: 14px; margin-bottom: 40px; }
-        .auth-btn { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); background: #161618; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .auth-btn:active { background: #222; }
+        /* GİRİŞ EKRANI (KESİN TIKLANABİLİR Z-INDEX) */
+        .auth-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999999; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 50px 24px; text-align: center; pointer-events: auto; }
+        .auth-logo-area { margin-top: 60px; pointer-events: none; }
+        .auth-logo-area h1 { font-size: 40px; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
+        .auth-logo-area p { color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+        
+        .auth-buttons-box { width: 100%; display: flex; flex-direction: column; gap: 14px; margin-bottom: 40px; pointer-events: auto; }
+        .auth-btn { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); background: #1c1c1e; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; pointer-events: auto !important; }
+        .auth-btn:active { background: #333; transform: scale(0.98); }
 
         /* ÜST HEADER */
         .top-header { position: absolute; top: 0; left: 0; width: 100%; height: 55px; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; z-index: 100; background: linear-gradient(to bottom, rgba(0,0,0,0.85), transparent); pointer-events: auto; }
@@ -238,5 +239,4 @@
             </div>
             <div class="settings-section-title">PROFİL ÖZELLEŞTİRME</div>
             <div class="settings-list">
-                <div class="settings-item" onclick="document.getElementById('avatarInput').click()">
-                    <div class="settings-item-left"><i class="fa-solid fa-image"></i><span>Galeriden
+                <div class="settings-it
