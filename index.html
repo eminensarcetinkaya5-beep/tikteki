@@ -24,18 +24,18 @@
 
         .app-shell { width: 100%; height: 100%; max-width: 480px; margin: 0 auto; background: #000; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
 
-        /* GİRİŞ EKRANI (KESİN TIKLANABİLİR Z-INDEX) */
-        .auth-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 999999; display: flex; flex-direction: column; justify-content: space-between; align-items: center; padding: 50px 24px; text-align: center; pointer-events: auto; }
-        .auth-logo-area { margin-top: 60px; pointer-events: none; }
-        .auth-logo-area h1 { font-size: 40px; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
+        /* GİRİŞ EKRANI */
+        .auth-screen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; z-index: 9999999; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 30px; text-align: center; }
+        .auth-logo-area { margin-bottom: 40px; }
+        .auth-logo-area h1 { font-size: 42px; font-weight: 900; letter-spacing: -1px; background: linear-gradient(135deg, var(--accent-cyan), var(--accent-pink)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 12px; }
         .auth-logo-area p { color: var(--text-muted); font-size: 14px; line-height: 1.5; }
         
-        .auth-buttons-box { width: 100%; display: flex; flex-direction: column; gap: 14px; margin-bottom: 40px; pointer-events: auto; }
-        .auth-btn { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); background: #1c1c1e; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; pointer-events: auto !important; }
+        .auth-buttons-box { width: 100%; max-width: 380px; display: flex; flex-direction: column; gap: 14px; }
+        .auth-btn { width: 100%; padding: 16px; border-radius: 14px; border: 1px solid var(--border-color); background: #1c1c1e; color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 12px; }
         .auth-btn:active { background: #333; transform: scale(0.98); }
 
         /* ÜST HEADER */
-        .top-header { position: absolute; top: 0; left: 0; width: 100%; height: 55px; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; z-index: 100; background: linear-gradient(to bottom, rgba(0,0,0,0.85), transparent); pointer-events: auto; }
+        .top-header { position: absolute; top: 0; left: 0; width: 100%; height: 55px; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; z-index: 100; background: linear-gradient(to bottom, rgba(0,0,0,0.85), transparent); }
         .top-header i { font-size: 20px; color: #fff; cursor: pointer; padding: 6px; }
         .header-tabs { display: flex; gap: 12px; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.6); }
         .header-tabs span { cursor: pointer; position: relative; padding-bottom: 4px; }
@@ -50,7 +50,7 @@
         .video-card video { width: 100%; height: 100%; object-fit: cover; }
 
         /* SAĞ ETKİLEŞİM */
-        .sidebar-right { position: absolute; right: 12px; bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; z-index: 80; pointer-events: auto; }
+        .sidebar-right { position: absolute; right: 12px; bottom: 20px; display: flex; flex-direction: column; align-items: center; gap: 16px; z-index: 80; }
         .avatar-box { position: relative; margin-bottom: 6px; cursor: pointer; }
         .avatar-box img { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; }
         .avatar-plus { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); background: var(--accent-pink); color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
@@ -64,22 +64,22 @@
         .disc-icon img { width: 18px; height: 18px; border-radius: 50%; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        .video-bottom-info { position: absolute; left: 14px; bottom: 20px; right: 85px; z-index: 80; text-shadow: 0 2px 6px rgba(0,0,0,0.9); pointer-events: auto; }
+        .video-bottom-info { position: absolute; left: 14px; bottom: 20px; right: 85px; z-index: 80; text-shadow: 0 2px 6px rgba(0,0,0,0.9); }
         .video-bottom-info h3 { font-size: 16px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
         .video-bottom-info p { font-size: 13px; color: #f4f4f5; margin-bottom: 8px; line-height: 1.3; }
         .music-bar { font-size: 12px; display: flex; align-items: center; gap: 8px; font-weight: 600; color: #e4e4e7; }
 
         /* ALT NAVİGASYON */
-        .bottom-navbar { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: #000; border-top: 1px solid rgba(255,255,255,0.15); display: flex; justify-content: space-around; align-items: center; z-index: 9999; pointer-events: auto !important; padding-bottom: env(safe-area-inset-bottom); }
-        .nav-link { background: none; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; cursor: pointer; font-size: 10px; font-weight: 600; gap: 3px; position: relative; width: 20%; height: 100%; justify-content: center; pointer-events: auto !important; }
+        .bottom-navbar { position: absolute; bottom: 0; left: 0; width: 100%; height: 60px; background: #000; border-top: 1px solid rgba(255,255,255,0.15); display: flex; justify-content: space-around; align-items: center; z-index: 9999; padding-bottom: env(safe-area-inset-bottom); }
+        .nav-link { background: none; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; cursor: pointer; font-size: 10px; font-weight: 600; gap: 3px; position: relative; width: 20%; height: 100%; justify-content: center; }
         .nav-link i { font-size: 20px; pointer-events: none; }
         .nav-link span { pointer-events: none; }
         .nav-link.active { color: #fff; }
 
-        .tiktok-add-btn { width: 45px; height: 28px; background: #fff; border-radius: 8px; position: relative; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; pointer-events: auto !important; }
-        .tiktok-add-btn::before { content: ''; position: absolute; left: -3px; width: 38px; height: 28px; background: var(--accent-cyan); border-radius: 8px; z-index: -1; pointer-events: none; }
-        .tiktok-add-btn::after { content: ''; position: absolute; right: -3px; width: 38px; height: 28px; background: var(--accent-pink); border-radius: 8px; z-index: -2; pointer-events: none; }
-        .tiktok-add-btn i { color: #000; font-size: 16px; font-weight: 900; pointer-events: none; }
+        .tiktok-add-btn { width: 45px; height: 28px; background: #fff; border-radius: 8px; position: relative; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .tiktok-add-btn::before { content: ''; position: absolute; left: -3px; width: 38px; height: 28px; background: var(--accent-cyan); border-radius: 8px; z-index: -1; }
+        .tiktok-add-btn::after { content: ''; position: absolute; right: -3px; width: 38px; height: 28px; background: var(--accent-pink); border-radius: 8px; z-index: -2; }
+        .tiktok-add-btn i { color: #000; font-size: 16px; font-weight: 900; }
 
         /* KAMERA */
         .camera-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 10000; display: none; flex-direction: column; justify-content: space-between; padding: 16px; }
@@ -142,8 +142,8 @@
                 <p>Gerçek kişilerin buluştuğu kısa video platformu.<br>Devam etmek için hesabınla giriş yap.</p>
             </div>
             <div class="auth-buttons-box">
-                <button class="auth-btn" onclick="loginWithGoogle()"><i class="fa-brands fa-google" style="color: #ea4335;"></i> Google (Gmail) ile Devam Et</button>
-                <button class="auth-btn" onclick="loginWithApple()"><i class="fa-brands fa-apple" style="color: #fff;"></i> Apple (iCloud) ile Devam Et</button>
+                <button class="auth-btn" id="googleLoginBtn" type="button"><i class="fa-brands fa-google" style="color: #ea4335;"></i> Google (Gmail) ile Devam Et</button>
+                <button class="auth-btn" id="appleLoginBtn" type="button"><i class="fa-brands fa-apple" style="color: #fff;"></i> Apple (iCloud) ile Devam Et</button>
             </div>
         </div>
 
@@ -239,4 +239,7 @@
             </div>
             <div class="settings-section-title">PROFİL ÖZELLEŞTİRME</div>
             <div class="settings-list">
-                <div class="settings-it
+                <div class="settings-item" onclick="document.getElementById('avatarInput').click()">
+                    <div class="settings-item-left"><i class="fa-solid fa-image"></i><span>Galeriden Fotoğraf Yükle</span></div>
+                    <input type="file" accept="image/*" style="display:none;" id="avatarInput" onchange="updateProfileAvatar(event)">
+                    <i class="fa-s
