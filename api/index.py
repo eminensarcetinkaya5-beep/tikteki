@@ -1,161 +1,331 @@
-from flask import Flask, render_template_string, request, jsonify
+from flask import Flask, render_template_string
 
 app = Flask(__name__)
 
-VPN_HTML_TEMPLATE = """
+HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusVPN Pro - Ultra Secure Web Proxy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TikTeki - Gerçek Kamera & TikTok Arayüzü</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
-            --bg-primary: #030712;
-            --bg-card: rgba(17, 24, 39, 0.75);
-            --accent-green: #10b981;
-            --accent-blue: #3b82f6;
-            --text-main: #f9fafb;
-            --text-muted: #9ca3af;
-            --border-color: rgba(255, 255, 255, 0.1);
+            --bg-black: #000000;
+            --accent-pink: #fe2c55;
+            --accent-cyan: #25f4ee;
+            --text-white: #ffffff;
+            --text-muted: #a1a1aa;
+            --border-color: rgba(255, 255, 255, 0.15);
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-        body { background: var(--bg-primary); color: var(--text-main); min-height: 100vh; display: flex; justify-content: center; align-items: center; padding: 20px; overflow-x: hidden; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; -webkit-tap-highlight-color: transparent; }
+        body { background: var(--bg-black); color: var(--text-white); height: 100vh; overflow: hidden; display: flex; justify-content: center; align-items: center; }
 
-        .glow { position: fixed; border-radius: 50%; filter: blur(140px); z-index: -1; opacity: 0.25; }
-        .glow-1 { top: -10%; left: -10%; width: 400px; height: 400px; background: var(--accent-blue); }
-        .glow-2 { bottom: -10%; right: -10%; width: 400px; height: 400px; background: var(--accent-green); }
+        /* Mobil Çerçeve */
+        .app-shell { width: 100%; max-width: 440px; height: 100vh; background: #000; position: relative; display: flex; flex-direction: column; overflow: hidden; }
 
-        .container { width: 100%; max-width: 440px; background: var(--bg-card); backdrop-filter: blur(25px); border: 1px solid var(--border-color); border-radius: 28px; padding: 32px; box-shadow: 0 25px 50px rgba(0, 0, 0, 0.6); text-align: center; }
+        /* 1. ANA SAYFA TİKTOK ARAYÜZÜ */
+        .top-header { position: absolute; top: 0; left: 0; width: 100%; height: 55px; display: flex; justify-content: space-between; align-items: center; padding: 0 16px; z-index: 50; background: linear-gradient(to bottom, rgba(0,0,0,0.7), transparent); }
+        .top-header i { font-size: 20px; color: #fff; cursor: pointer; }
+        .header-tabs { display: flex; gap: 14px; font-size: 15px; font-weight: 700; color: rgba(255,255,255,0.6); }
+        .header-tabs span { cursor: pointer; position: relative; padding-bottom: 4px; }
+        .header-tabs span.active { color: #fff; }
+        .header-tabs span.active::after { content: ''; position: absolute; bottom: 0; left: 20%; width: 60%; height: 2px; background: #fff; border-radius: 2px; }
 
-        /* Kalkan İkonu & Başlık */
-        .logo { font-size: 26px; font-weight: 800; color: #fff; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 12px; }
-        .shield-icon { width: 38px; height: 38px; fill: var(--accent-green); filter: drop-shadow(0 0 10px rgba(16,185,129,0.5)); }
+        .feed-container { flex: 1; overflow-y: scroll; scroll-snap-type: y mandatory; scrollbar-width: none; height: 100%; position: relative; }
+        .feed-container::-webkit-scrollbar { display: none; }
 
-        .select-box { margin-bottom: 25px; text-align: left; }
-        .select-box label { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 8px; }
-        select { width: 100%; padding: 14px 18px; border-radius: 16px; border: 1px solid var(--border-color); background: rgba(3, 7, 18, 0.85); color: #fff; font-size: 15px; outline: none; }
+        .video-card { width: 100%; height: 100%; scroll-snap-align: start; position: relative; display: flex; align-items: center; justify-content: center; background: #000; }
+        .video-card video { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Güç / Bağlantı Butonu */
-        .connect-btn { width: 130px; height: 130px; border-radius: 50%; background: linear-gradient(135deg, #1f2937, #111827); border: 4px solid var(--border-color); color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 25px auto; transition: all 0.4s ease; box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
-        .power-icon { width: 40px; height: 40px; fill: currentColor; margin-bottom: 6px; transition: all 0.3s; }
-        .connect-btn span { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
+        /* TikTok Sağ Butonlar Barı */
+        .sidebar-right { position: absolute; right: 12px; bottom: 90px; display: flex; flex-direction: column; align-items: center; gap: 18px; z-index: 20; }
+        .avatar-box { position: relative; margin-bottom: 6px; }
+        .avatar-box img { width: 48px; height: 48px; border-radius: 50%; border: 2px solid #fff; object-fit: cover; }
+        .avatar-plus { position: absolute; bottom: -6px; left: 50%; transform: translateX(-50%); background: var(--accent-pink); color: #fff; border-radius: 50%; width: 18px; height: 18px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
-        .connect-btn.active { background: linear-gradient(135deg, #059669, #10b981); border-color: #34d399; color: #fff; box-shadow: 0 0 45px rgba(16, 185, 129, 0.6); transform: scale(1.05); }
+        .side-btn { background: none; border: none; color: #fff; display: flex; flex-direction: column; align-items: center; cursor: pointer; text-shadow: 0 2px 5px rgba(0,0,0,0.8); gap: 3px; }
+        .side-btn i { font-size: 28px; }
+        .side-btn span { font-size: 11px; font-weight: 700; }
 
-        /* Durum Kartı */
-        .status-card { background: rgba(3, 7, 18, 0.65); border: 1px solid var(--border-color); border-radius: 18px; padding: 16px; display: flex; justify-content: space-around; align-items: center; margin-top: 20px; }
-        .stat-item h4 { font-size: 16px; font-weight: 800; color: #fff; margin-bottom: 2px; }
-        .stat-item p { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+        .disc-icon { width: 40px; height: 40px; border-radius: 50%; background: #222; border: 8px solid #111; animation: spin 4s linear infinite; display: flex; align-items: center; justify-content: center; margin-top: 10px; }
+        .disc-icon img { width: 20px; height: 20px; border-radius: 50%; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        .proxy-box { margin-top: 22px; display: none; text-align: left; animation: fadeIn 0.4s ease-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Sol Alt Bilgiler */
+        .video-bottom-info { position: absolute; left: 14px; bottom: 85px; right: 85px; z-index: 20; text-shadow: 0 2px 6px rgba(0,0,0,0.9); }
+        .video-bottom-info h3 { font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+        .video-bottom-info p { font-size: 13px; color: #f4f4f5; margin-bottom: 8px; line-height: 1.3; }
+        .music-bar { font-size: 12px; display: flex; align-items: center; gap: 8px; font-weight: 600; }
+
+        /* Alt Navigasyon Barı */
+        .bottom-navbar { height: 60px; background: #000; border-top: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-around; align-items: center; z-index: 60; }
+        .nav-link { background: none; border: none; color: var(--text-muted); display: flex; flex-direction: column; align-items: center; cursor: pointer; font-size: 10px; font-weight: 600; gap: 3px; position: relative; }
+        .nav-link i { font-size: 20px; }
+        .nav-link.active { color: #fff; }
+        .badge-count { position: absolute; top: -3px; right: 2px; background: var(--accent-pink); color: #fff; font-size: 9px; font-weight: 900; border-radius: 10px; padding: 1px 5px; }
+
+        /* Birebir TikTok Plus Butonu */
+        .tiktok-add-btn { width: 45px; height: 28px; background: #fff; border-radius: 8px; position: relative; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .tiktok-add-btn::before { content: ''; position: absolute; left: -3px; width: 38px; height: 28px; background: var(--accent-cyan); border-radius: 8px; z-index: -1; }
+        .tiktok-add-btn::after { content: ''; position: absolute; right: -3px; width: 38px; height: 28px; background: var(--accent-pink); border-radius: 8px; z-index: -2; }
+        .tiktok-add-btn i { color: #000; font-size: 16px; font-weight: 900; }
+
+        /* 2. BİREBİR TİKTOK KAMERA ARAYÜZÜ (EKRAN GÖRÜNTÜSÜ İLE AYNI) */
+        .camera-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #000; z-index: 200; display: none; flex-direction: column; justify-content: space-between; padding: 16px; }
+        .camera-preview { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; transform: scaleX(-1); }
+
+        /* Kamera Üst Araçlar */
+        .cam-top-bar { position: relative; z-index: 10; display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+        .cam-close-btn { background: none; border: none; color: #fff; font-size: 24px; cursor: pointer; }
+        .sound-select-btn { background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 6px 16px; color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; gap: 6px; }
+
+        /* Kamera Sağ Araçlar (Sağ Menü) */
+        .cam-right-tools { position: absolute; right: 16px; top: 70px; z-index: 10; display: flex; flex-direction: column; gap: 18px; align-items: center; }
+        .tool-icon { background: none; border: none; color: #fff; display: flex; flex-direction: column; align-items: center; gap: 2px; font-size: 20px; cursor: pointer; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+        .tool-icon span { font-size: 10px; font-weight: 600; }
+
+        /* Kamera Alt Çekim Bölümü */
+        .cam-bottom-section { position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 15px; margin-bottom: 10px; }
         
-        .proxy-box input { width: 100%; padding: 14px 16px; border-radius: 14px; border: 1px solid var(--border-color); background: rgba(3, 7, 18, 0.9); color: #fff; font-size: 14px; outline: none; margin-bottom: 12px; }
-        .proxy-btn { width: 100%; padding: 14px; background: var(--accent-blue); border: none; border-radius: 14px; color: white; font-weight: bold; font-size: 15px; cursor: pointer; transition: background 0.3s; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
-        .proxy-btn:hover { background: #2563eb; }
+        .cam-modes { display: flex; gap: 18px; font-size: 13px; font-weight: 800; color: rgba(255,255,255,0.6); }
+        .cam-modes span { cursor: pointer; padding: 4px 10px; border-radius: 12px; }
+        .cam-modes span.active { color: #000; background: #fff; }
+
+        .record-trigger-row { display: flex; align-items: center; justify-content: space-around; width: 100%; }
+        .gallery-mini-thumb { width: 40px; height: 40px; border-radius: 8px; border: 2px solid #fff; background: #222; overflow: hidden; display: flex; align-items: center; justify-content: center; cursor: pointer; }
+        .gallery-mini-thumb img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* Büyük Beyaz Çekim Butonu */
+        .record-outer-ring { width: 78px; height: 78px; border-radius: 50%; border: 4px solid #fff; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: transform 0.2s; }
+        .record-inner-circle { width: 62px; height: 62px; border-radius: 50%; background: #fff; transition: all 0.3s; }
+        .recording .record-inner-circle { width: 32px; height: 32px; border-radius: 6px; background: var(--accent-pink); }
+
+        .cam-bottom-tabs { display: flex; gap: 25px; font-size: 12px; font-weight: 800; color: rgba(255,255,255,0.6); letter-spacing: 0.5px; }
+        .cam-bottom-tabs span.active { color: #fff; }
+
+        /* PROFİL & MODALLAR */
+        .fullscreen-modal { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: #0c0c0e; z-index: 150; display: none; flex-direction: column; padding: 18px; overflow-y: auto; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 10px; font-weight: 800; }
+        .modal-header i { font-size: 22px; cursor: pointer; }
+
+        .setting-card { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 16px; margin-bottom: 14px; }
+        .setting-card h4 { font-size: 13px; color: var(--accent-cyan); margin-bottom: 10px; text-transform: uppercase; font-weight: 800; }
+        
+        input[type="text"], input[type="file"] { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--border-color); background: rgba(0,0,0,0.7); color: #fff; font-size: 14px; outline: none; }
+        .btn-pink { width: 100%; padding: 14px; background: var(--accent-pink); border: none; border-radius: 12px; color: #fff; font-weight: 800; font-size: 14px; cursor: pointer; margin-top: 10px; }
+
+        /* Boş Durum */
+        .empty-feed { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; text-align: center; padding: 30px; color: var(--text-muted); }
+        .empty-feed i { font-size: 55px; color: var(--accent-pink); margin-bottom: 14px; }
     </style>
 </head>
 <body>
 
-    <div class="glow glow-1"></div>
-    <div class="glow glow-2"></div>
-
-    <div class="container">
-        <div class="logo">
-            <svg class="shield-icon" viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 10.99h7c-.53 4.12-3.28 7.79-7 8.94V12H5V6.3l7-3.11v8.8subscriptionZ"/></svg>
-            NexusVPN Pro
-        </div>
-
-        <div class="select-box">
-            <label>Sunucu Lokasyonu Seçin</label>
-            <select id="serverLocation">
-                <option value="us">🇺🇸 Amerika Birleşik Devletleri (US-East)</option>
-                <option value="de">🇩🇪 Almanya (Frankfurt - Ultra Hızlı)</option>
-                <option value="nl">🇳🇱 Hollanda (Amsterdam - P2P)</option>
-                <option value="gb">🇬🇧 İngiltere (London Secure)</option>
-            </select>
-        </div>
-
-        <button id="connectBtn" class="connect-btn" onclick="toggleVPN()">
-            <svg class="power-icon" viewBox="0 0 24 24"><path d="M13 3h-2v10h2V3zm4.83 2.17l-1.42 1.42C17.99 7.86 19 9.81 19 12c0 3.87-3.13 7-7 7s-7-3.13-7-7c0-2.19 1.01-4.14 2.58-5.42L6.17 5.17C4.23 6.82 3 9.26 3 12c0 4.97 4.03 9 9 9s9-4.03 9-9c0-2.74-1.23-5.18-3.17-6.83z"/></svg>
-            <span id="btnText">BAĞLAN</span>
-        </button>
-
-        <p id="connectionStatus" style="font-size: 14px; color: var(--text-muted); font-weight: 600;">Güvenli tünel kapalı</p>
-
-        <div class="status-card">
-            <div class="stat-item">
-                <h4 id="pingText">-- ms</h4>
-                <p>GECİKME</p>
+    <div class="app-shell">
+        
+        <!-- Üst Header Barı -->
+        <div class="top-header">
+            <i class="fa-solid fa-tv"></i>
+            <div class="header-tabs">
+                <span>Topluluk</span>
+                <span>Takipte</span>
+                <span class="active">Sizin İçin</span>
             </div>
-            <div style="width:1px; height:30px; background:var(--border-color);"></div>
-            <div class="stat-item">
-                <h4 id="ipText">192.168.1.1</h4>
-                <p>SANAL IP</p>
+            <i class="fa-solid fa-magnifying-glass" onclick="openModal('searchModal')"></i>
+        </div>
+
+        <!-- Akış (Sadece Gerçek Kullanıcı Videoları) -->
+        <div class="feed-container" id="feedContainer">
+            <div class="empty-feed">
+                <i class="fa-solid fa-camera-retro"></i>
+                <h3>Henüz Hiç Video Yok</h3>
+                <p>Platformda %100 gerçek kullanıcılar paylaşım yapar. Aşağıdaki <b>+</b> butonuna basarak kameranla ilk videoyu çek!</p>
             </div>
         </div>
 
-        <div class="proxy-box" id="proxyBox">
-            <label style="font-size:12px; font-weight:700; color:var(--accent-blue); display:block; margin-bottom:8px;">🔒 ŞİFRELİ WEB PROXY SÖRFÜ</label>
-            <input type="text" id="targetUrl" placeholder="https://google.com adresini girin...">
-            <button class="proxy-btn" onclick="launchProxy()">Güvenli Tünelde Aç</button>
+        <!-- Alt Menü Barı -->
+        <div class="bottom-navbar">
+            <button class="nav-link active" onclick="closeAllModals()"><i class="fa-solid fa-house"></i><span>Ana sayfa</span></button>
+            <button class="nav-link" onclick="openModal('friendsModal')"><i class="fa-solid fa-user-group"></i><span>Arkadaşlar</span></button>
+            <button class="tiktok-add-btn" onclick="openCamera()"><i class="fa-solid fa-plus"></i></button>
+            <button class="nav-link" onclick="openModal('inboxModal')"><i class="fa-solid fa-comment-dots"></i><span class="badge-count">1</span><span>Gelen kutusu</span></button>
+            <button class="nav-link" onclick="openModal('profileModal')"><i class="fa-solid fa-user"></i><span>Profil</span></button>
         </div>
+
+        <!-- 2. CANLI KAMERA KAYIT EKRANI (BİREBİR EKRAN GÖRÜNTÜSÜ) -->
+        <div class="camera-screen" id="cameraScreen">
+            <video class="camera-preview" id="camPreview" autoplay playsinline muted></video>
+
+            <!-- Kamera Üstü -->
+            <div class="cam-top-bar">
+                <button class="cam-close-btn" onclick="closeCamera()"><i class="fa-solid fa-xmark"></i></button>
+                <div class="sound-select-btn"><i class="fa-solid fa-music"></i> Ses ekle</div>
+                <div style="width:24px;"></div>
+            </div>
+
+            <!-- Kamera Sağ Araçlar Barı -->
+            <div class="cam-right-tools">
+                <button class="tool-icon" onclick="flipCamera()"><i class="fa-solid fa-rotate"></i><span>Çevir</span></button>
+                <button class="tool-icon"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Efektler</span></button>
+                <button class="tool-icon"><i class="fa-solid fa-clock"></i><span>Zamanlayıcı</span></button>
+                <button class="tool-icon"><i class="fa-solid fa-border-all"></i><span>Düzen</span></button>
+                <button class="tool-icon"><i class="fa-solid fa-bolt"></i><span>Flaş</span></button>
+                <button class="tool-icon"><i class="fa-solid fa-sliders"></i><span>Filtreler</span></button>
+            </div>
+
+            <!-- Kamera Altı -->
+            <div class="cam-bottom-section">
+                <div class="cam-modes">
+                    <span>60s</span>
+                    <span>15 sn</span>
+                    <span class="active">FOTOĞRAF</span>
+                    <span>METİN</span>
+                </div>
+
+                <div class="record-trigger-row">
+                    <!-- Galeri Seçim Butonu -->
+                    <label class="gallery-mini-thumb">
+                        <i class="fa-solid fa-image" style="color:#fff; font-size:18px;"></i>
+                        <input type="file" id="galleryFileInput" accept="video/*,image/*" style="display:none;" onchange="handleGalleryUpload(event)">
+                    </label>
+
+                    <!-- Ana Çekim Butonu -->
+                    <div class="record-outer-ring" id="recordBtn" onclick="toggleRecording()">
+                        <div class="record-inner-circle"></div>
+                    </div>
+
+                    <div style="width:40px;"></div>
+                </div>
+
+                <div class="cam-bottom-tabs">
+                    <span>Yayın</span>
+                    <span class="active">KAMERA</span>
+                    <span>OLUŞTUR</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PROFİL & AYARLAR MODALI -->
+        <div id="profileModal" class="fullscreen-modal">
+            <div class="modal-header">
+                <span>Profil & Ayarlar</span>
+                <i class="fa-solid fa-xmark" onclick="closeModal('profileModal')"></i>
+            </div>
+
+            <div style="text-align:center; margin-bottom:20px;">
+                <img id="userProfileImg" src="https://www.w3schools.com/howto/img_avatar.png" style="width:80px; height:80px; border-radius:50%; border:3px solid var(--accent-pink); object-fit:cover;">
+                <h3 id="userProfileName" style="margin-top:10px;">@gercek_kullanici</h3>
+            </div>
+
+            <div class="setting-card">
+                <h4>Galeriden Profil Resmi Seç</h4>
+                <input type="file" id="avatarInput" accept="image/*" onchange="updateProfileAvatar(event)">
+            </div>
+
+            <div class="setting-card">
+                <h4>Kullanıcı Adı Değiştir (7 Günde 1 Hak)</h4>
+                <input type="text" id="newUsernameInput" placeholder="@yeni_kullanici">
+                <p id="usernameRuleText" style="font-size:11px; color:var(--accent-pink); margin-top:6px;"></p>
+                <button class="btn-pink" onclick="changeUsernameWithRule()">Güncelle</button>
+            </div>
+        </div>
+
+        <!-- DİĞER SAYFALAR -->
+        <div id="friendsModal" class="fullscreen-modal">
+            <div class="modal-header"><span>Arkadaşlar</span><i class="fa-solid fa-xmark" onclick="closeModal('friendsModal')"></i></div>
+            <p style="text-align:center; color:#888; margin-top:30px;">Henüz arkadaş eklenmedi.</p>
+        </div>
+        <div id="inboxModal" class="fullscreen-modal">
+            <div class="modal-header"><span>Gelen Kutusu</span><i class="fa-solid fa-xmark" onclick="closeModal('inboxModal')"></i></div>
+            <p style="text-align:center; color:#888; margin-top:30px;">Bildirim bulunmuyor.</p>
+        </div>
+        <div id="searchModal" class="fullscreen-modal">
+            <div class="modal-header"><span>Arama</span><i class="fa-solid fa-xmark" onclick="closeModal('searchModal')"></i></div>
+            <input type="text" placeholder="Kullanıcı veya video ara...">
+        </div>
+
     </div>
 
     <script>
-        let isConnected = false;
+        // Yerel Veri Hafızası
+        let userData = JSON.parse(localStorage.getItem('tikteki_user')) || {
+            username: "@kullanici_" + Math.floor(Math.random() * 8999 + 1000),
+            avatar: "https://www.w3schools.com/howto/img_avatar.png",
+            lastUsernameChange: 0
+        };
 
-        function toggleVPN() {
-            const btn = document.getElementById('connectBtn');
-            const btnText = document.getElementById('btnText');
-            const statusText = document.getElementById('connectionStatus');
-            const pingText = document.getElementById('pingText');
-            const ipText = document.getElementById('ipText');
-            const proxyBox = document.getElementById('proxyBox');
+        let userVideos = JSON.parse(localStorage.getItem('tikteki_videos')) || [];
+        let mediaStream = null;
+        let mediaRecorder = null;
+        let recordedChunks = [];
+        let isRecording = false;
+        let currentFacingMode = 'user';
 
-            isConnected = !isConnected;
+        function initApp() {
+            document.getElementById('userProfileName').innerText = userData.username;
+            document.getElementById('userProfileImg').src = userData.avatar;
+            renderFeed();
+        }
 
-            if (isConnected) {
-                btn.classList.add('active');
-                btnText.textContent = "BAĞLI";
-                statusText.innerHTML = "256-bit AES Şifreleme Aktif 🛡️";
-                statusText.style.color = "var(--accent-green)";
-                pingText.textContent = Math.floor(Math.random() * 20) + 14 + " ms";
-                ipText.textContent = "185.220." + Math.floor(Math.random() * 200) + "." + Math.floor(Math.random() * 200);
-                proxyBox.style.display = "block";
+        function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+        function closeAllModals() { document.querySelectorAll('.fullscreen-modal').forEach(m => m.style.display = 'none'); }
+
+        /* GERÇEK KAMERA YÖNETİMİ (MediaRecorder API) */
+        async function openCamera() {
+            document.getElementById('cameraScreen').style.display = 'flex';
+            try {
+                mediaStream = await navigator.mediaDevices.getUserMedia({
+                    video: { facingMode: currentFacingMode },
+                    audio: true
+                });
+                document.getElementById('camPreview').srcObject = mediaStream;
+            } catch (err) {
+                alert("Kameraya erişim izni verilmeli!");
+                closeCamera();
+            }
+        }
+
+        function closeCamera() {
+            if (mediaStream) {
+                mediaStream.getTracks().forEach(track => track.stop());
+            }
+            document.getElementById('cameraScreen').style.display = 'none';
+        }
+
+        async function flipCamera() {
+            currentFacingMode = (currentFacingMode === 'user') ? 'environment' : 'user';
+            closeCamera();
+            openCamera();
+        }
+
+        function toggleRecording() {
+            const btn = document.getElementById('recordBtn');
+            if (!isRecording) {
+                recordedChunks = [];
+                mediaRecorder = new MediaRecorder(mediaStream);
+                mediaRecorder.ondataavailable = event => {
+                    if (event.data.size > 0) recordedChunks.push(event.data);
+                };
+                mediaRecorder.onstop = saveRecordedVideo;
+                mediaRecorder.start();
+                isRecording = true;
+                btn.classList.add('recording');
             } else {
-                btn.classList.remove('active');
-                btnText.textContent = "BAĞLAN";
-                statusText.textContent = "Güvenli tünel kapalı";
-                statusText.style.color = "var(--text-muted)";
-                pingText.textContent = "-- ms";
-                ipText.textContent = "192.168.1.1";
-                proxyBox.style.display = "none";
+                mediaRecorder.stop();
+                isRecording = false;
+                btn.classList.remove('recording');
             }
         }
 
-        function launchProxy() {
-            let url = document.getElementById('targetUrl').value.trim();
-            if (!url) {
-                alert('Lütfen geçerli bir web adresi girin!');
-                return;
-            }
-            if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                url = 'https://' + url;
-            }
-            window.open('https://via.hyperskill.org/' + url, '_blank');
-        }
-    </script>
-</body>
-</html>
-"""
-
-@app.route('/')
-def home():
-    return render_template_string(VPN_HTML_TEMPLATE)
-
-if __name__ == '__main__':
-    app.run()
-    
+        function saveRecordedVideo() {
+            const blob = new Blob(recordedChunks, { type: 'video/mp4' });
+            const videoUrl = URL.createObjectURL(blob);
+            
+            const newPost = {
+                id: Date.now(),
+                url: videoUrl,
+                caption: "Kameramdan yeni video! ✨ #
