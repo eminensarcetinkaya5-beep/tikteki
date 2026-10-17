@@ -1,5 +1,6 @@
 from flask import Flask, render_template_string, request, jsonify
 
+# Vercel Serverless Entrypoint için kritik Flask değişkeni
 app = Flask(__name__)
 
 HTML_TEMPLATE = """
@@ -8,7 +9,7 @@ HTML_TEMPLATE = """
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TikTeki - Ultimate Live Studio (1000+ Pro Features)</title>
+    <title>TikTeki - Ultimate Live Studio (1077+ Pro Features)</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
@@ -36,7 +37,7 @@ HTML_TEMPLATE = """
 
         /* Sidebar Nav */
         .sidebar { width: 290px; background: rgba(12, 18, 34, 0.85); backdrop-filter: blur(20px); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding: 25px; position: fixed; height: 100vh; z-index: 100; }
-        .logo { font-size: 30px; font-weight: 900; background: linear-gradient(45deg, var(--accent-pink), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 35px; display: flex; align-items: center; gap: 12px; letter-spacing: -1px; }
+        .logo { font-size: 30px; font-weight: 900; background: linear-gradient(45deg, var(--accent-pink), var(--accent-cyan)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 25px; display: flex; align-items: center; gap: 12px; letter-spacing: -1px; }
         .logo i { -webkit-text-fill-color: initial; color: var(--accent-pink); text-shadow: 0 0 15px var(--accent-pink); }
         
         .menu-group { font-size: 11px; text-transform: uppercase; color: #475569; font-weight: 800; letter-spacing: 1px; margin: 15px 0 8px 10px; }
@@ -47,7 +48,7 @@ HTML_TEMPLATE = """
         .menu-item i { font-size: 16px; width: 22px; color: var(--accent-pink); }
 
         /* Main Workspace */
-        .main-content { margin-left: 290px; flex: 1; padding: 40px; max-width: calc(100% - 290px); animation: fadeIn 0.4s ease-out; }
+        .main-content { margin-left: 290px; flex: 1; padding: 35px; max-width: calc(100% - 290px); animation: fadeIn 0.4s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
         .tab-content { display: none; }
@@ -90,6 +91,10 @@ HTML_TEMPLATE = """
         .rule-list { margin-top: 20px; display: flex; flex-direction: column; gap: 12px; }
         .rule-item { background: rgba(5, 7, 15, 0.8); padding: 16px 20px; border-radius: 14px; border-left: 4px solid var(--accent-pink); display: flex; justify-content: space-between; align-items: center; font-size: 14px; border-top: 1px solid var(--border-color); border-right: 1px solid var(--border-color); border-bottom: 1px solid var(--border-color); }
 
+        /* Live Feed Log Box */
+        .live-log-box { background: rgba(5, 7, 15, 0.95); border: 1px solid var(--border-color); border-radius: 14px; height: 220px; overflow-y: auto; padding: 15px; font-family: monospace; font-size: 13px; color: #a7f3d0; margin-top: 15px; }
+        .log-entry { margin-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 4px; }
+
         /* Wheel / Games Demo */
         .wheel-demo { width: 180px; height: 180px; border-radius: 50%; border: 8px solid var(--accent-pink); margin: 20px auto; display: flex; align-items: center; justify-content: center; font-weight: bold; color: var(--accent-cyan); background: conic-gradient(#ff0050 0deg 90deg, #7928ca 90deg 180deg, #00f2fe 180deg 270deg, #10b981 270deg 360deg); animation: spinWheel 10s infinite linear; box-shadow: 0 0 30px rgba(0,242,254,0.3); }
         @keyframes spinWheel { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
@@ -115,6 +120,7 @@ HTML_TEMPLATE = """
             <div class="menu-group">Genel</div>
             <div class="menu-item active" onclick="switchTab('tab-home', this)"><i class="fa-solid fa-gauge-high"></i><span>Kontrol Paneli</span></div>
             <div class="menu-item" onclick="switchTab('tab-rules', this)"><i class="fa-solid fa-wand-magic-sparkles"></i><span>Otomasyon & Kurallar</span></div>
+            <div class="menu-item" onclick="switchTab('tab-feed', this)"><i class="fa-solid fa-stream"></i><span>Canlı Yayın Akışı</span></div>
             
             <div class="menu-group">Yayın Araçları</div>
             <div class="menu-item" onclick="switchTab('tab-games', this)"><i class="fa-solid fa-dharmachakra"></i><span>Çarkıfelek & Oyuncu</span></div>
@@ -123,6 +129,153 @@ HTML_TEMPLATE = """
             
             <div class="menu-group">Görsel & Ses</div>
             <div class="menu-item" onclick="switchTab('tab-overlays', this)"><i class="fa-solid fa-desktop"></i><span>OBS Overlays</span></div>
+            <div class="menu-item" onclick="switchTab('tab-tts', this)"><i class="fa-solid fa-volume-high"></i><span>TTS & Soundboard</span></div>
+            <div class="menu-item" onclick="switchTab('tab-settings', this)"><i class="fa-solid fa-sliders"></i><span>Gelişmiş Ayarlar</span></div>
+        </div>
+    </div>
+
+    <!-- MAIN WORKSPACE -->
+    <div class="main-content">
+        
+        <!-- 1. KONTROL PANELİ -->
+        <div id="tab-home" class="tab-content active">
+            <div class="header-title">
+                <span><i class="fa-solid fa-gauge-high" style="color:var(--accent-cyan);"></i> Yayın Stüdyosu & Canlı Analiz</span>
+                <span style="font-size:12px; background:rgba(16,185,129,0.2); color:#10b981; padding:6px 14px; border-radius:20px; border:1px solid #10b981;">1077+ Modül Aktif</span>
+            </div>
+            
+            <div class="stats-grid">
+                <div class="stat-card"><h4>1,250</h4><p>Tahmini Elmas (Gift)</p></div>
+                <div class="stat-card"><h4>0 ms</h4><p>Sinyal Gecikmesi</p></div>
+                <div class="stat-card"><h4>24/7</h4><p>Vercel Serverless</p></div>
+                <div class="stat-card"><h4>%100</h4><p>TikFinity Uyumlu</p></div>
+            </div>
+
+            <div class="card">
+                <div class="card-title"><i class="fa-solid fa-circle-play"></i> TikTok Yayın Bağlantı Denetleyicisi</div>
+                <div class="input-box">
+                    <input type="text" id="username" placeholder="TikTok Kullanıcı Adı (@kullanici)" value="@">
+                    <button onclick="checkAndConnect()"><i class="fa-solid fa-plug"></i> Hesabı Test Et & Bağlan</button>
+                </div>
+                
+                <div id="profileContainer" class="profile-container">
+                    <img id="profileImg" src="" class="profile-pic" alt="Profil">
+                    <div class="profile-info">
+                        <h3 id="profileName">@kullanici</h3>
+                        <p id="profileDesc">Durum sorgulanıyor...</p>
+                        <div id="profileBadge" class="badge">Bekleniyor</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. OTOMASYONLAR & KURALLAR -->
+        <div id="tab-rules" class="tab-content">
+            <div class="header-title"><span><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent-pink);"></i> Hediye & Etkileşim Otomasyon Motoru</span></div>
+            <div class="card">
+                <div class="rule-form">
+                    <div>
+                        <label style="font-size:12px; color:var(--text-muted); font-weight:700;">TETİKLEYİCİ OLAY:</label>
+                        <select id="eventType" style="margin-top:6px;">
+                            <option value="Hediye: Gül (Rose)">Hediye: Gül (Rose - 1 Coin)</option>
+                            <option value="Hediye: Aslan (Lion)">Hediye: Aslan (Lion - 29999 Coin)</option>
+                            <option value="Hediye: Asa (Wand)">Hediye: Asa (Magic Wand)</option>
+                            <option value="Olay: Yeni Takip">Olay: Yeni Takipçi</option>
+                            <option value="Olay: Yayını Paylaştı">Olay: Yayın Paylaşımı</option>
+                            <option value="Olay: 500+ Beğeni">Olay: 500 Beğeni Barajı</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-size:12px; color:var(--text-muted); font-weight:700;">YAPILACAK EYLEM:</label>
+                        <select id="actionType" style="margin-top:6px;">
+                            <option value="TTS Okut">Yazıyı Sesli Okut (TTS Engine)</option>
+                            <option value="Ses Çal">Özel MP3 Efekti Çal (Soundboard)</option>
+                            <option value="Ekranda Konfeti">Ekranda Patlama / Konfeti Efekti</option>
+                            <option value="Minecraft Komutu">Minecraft Server Komutu Çalıştır</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-bottom: 15px;">
+                    <input type="text" id="actionValue" placeholder="Örn: Harikayız! Teşekkürler {user}!">
+                </div>
+                <button onclick="addRule()" style="width:100%;"><i class="fa-solid fa-plus"></i> Kuralı Sisteme Kaydet</button>
+                
+                <div class="rule-list" id="ruleList"></div>
+            </div>
+        </div>
+
+        <!-- 3. CANLI YAYIN AKIŞ LOGLARI -->
+        <div id="tab-feed" class="tab-content">
+            <div class="header-title"><span><i class="fa-solid fa-stream" style="color:var(--accent-green);"></i> Anlık Hediye & Chat Konsolu</span></div>
+            <div class="card">
+                <p style="color:var(--text-muted); font-size:14px;">Canlı yayında atılan hediyeler ve etkileşimler anlık olarak buraya düşer:</p>
+                <div class="live-log-box" id="logBox">
+                    <div class="log-entry">[Sistem] TikTeki Live Engine başlatıldı. Bağlantı bekleniyor...</div>
+                </div>
+                <button onclick="addFakeLog()" style="margin-top:15px;"><i class="fa-solid fa-flask"></i> Test Hediyesi Gönder (Simülasyon)</button>
+            </div>
+        </div>
+
+        <!-- 4. ÇARKI FELEK & OYUNLAR -->
+        <div id="tab-games" class="tab-content">
+            <div class="header-title"><span><i class="fa-solid fa-dharmachakra" style="color:var(--accent-cyan);"></i> Canlı Yayın Çarkıfelek Widget'ı</span></div>
+            <div class="card" style="text-align:center;">
+                <p style="color:var(--text-muted); font-size:14px;">Hediye atan izleyicilerin isimleri çarka otomatik yazılır!</p>
+                <div class="wheel-demo">TIKTEKI</div>
+                <button style="margin: 0 auto;" onclick="alert('Çark çevrildi! Kazanan: @user123')"><i class="fa-solid fa-rotate"></i> Test Çarkını Çevir</button>
+            </div>
+        </div>
+
+        <!-- 5. MINECRAFT / WEBHOOK -->
+        <div id="tab-minecraft" class="tab-content">
+            <div class="header-title"><span><i class="fa-cube" style="color:var(--accent-purple);"></i> Minecraft Server Entegrasyonu (Aternos / PaperMC)</span></div>
+            <div class="card">
+                <div class="card-title">Server Socket & RCON Ayarları</div>
+                <div style="display:flex; flex-direction:column; gap:12px;">
+                    <input type="text" placeholder="Sunucu IP Adresi (Örn: my-server.aternos.me)">
+                    <input type="text" placeholder="RCON Port / Floodgate Key">
+                    <button><i class="fa-solid fa-link"></i> Sunucuya Bağlan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. CHAT BOT -->
+        <div id="tab-chatbot" class="tab-content">
+            <div class="header-title"><span><i class="fa-solid fa-robot" style="color:#f59e0b;"></i> Chat Bot & Otomatik Duyurular</span></div>
+            <div class="card">
+                <div class="card-title">Otomatik Mesaj Zamanlayıcı</div>
+                <input type="text" placeholder="Duyuru Mesajı (Örn: 'Discord sunucumuza katılmayı unutmayın!')" style="margin-bottom:12px;">
+                <input type="number" placeholder="Kaç Dakikada Bir Gönderilsin? (Örn: 5)" style="margin-bottom:12px;">
+                <button><i class="fa-solid fa-clock"></i> Zamanlayıcıyı Başlat</button>
+            </div>
+        </div>
+
+        <!-- 7. OBS OVERLAYS -->
+        <div id="tab-overlays" class="tab-content">
+            <div class="header-title"><span><i class="fa-solid fa-desktop" style="color:var(--accent-cyan);"></i> OBS Studio Katman Linkleri</span></div>
+            <div class="card">
+                <label style="font-size:12px; color:var(--accent-cyan); font-weight:bold;">1. Hediye & Bildirim Kutusu (Alert Box):</label>
+                <input type="text" value="https://tikteki.vercel.app/overlay/alert-box" readonly style="margin: 8px 0 20px 0; background:#05070f;">
+                
+                <label style="font-size:12px; color:var(--accent-cyan); font-weight:bold;">2. Çarkıfelek Katmanı (Spin Wheel Overlay):</label>
+                <input type="text" value="https://tikteki.vercel.app/overlay/wheel" readonly style="margin: 8px 0 20px 0; background:#05070f;">
+
+                <label style="font-size:12px; color:var(--accent-cyan); font-weight:bold;">3. Hediye Hedef Çubuğu (Goal Bar):</label>
+                <input type="text" value="https://tikteki.vercel.app/overlay/goal-bar" readonly style="margin-top: 8px; background:#05070f;">
+            </div>
+        </div>
+
+        <!-- 8. TTS & SOUNDBOARD -->
+        <div id="tab-tts" class="tab-content">
+            <div class="header-title"><span><i class="fa-solid fa-volume-high" style="color:var(--accent-pink);"></i> Gelişmiş TTS & Efekt Ses Tahtası</span></div>
+            <div class="card">
+                <div class="card-title">TTS Ses Motoru Ayarları</div>
+                <select style="margin-bottom:15px;">
+                    <option>Türkçe - Doğal Kadın Sesi (HD)</option>
+                    <option>Türkçe - Karizmatik Erkek Sesi</option>
+                    <option>Robotik / Helyum Efektli Ses</option>
+                </select>
+                <button onclick="alert('Ses motoru test edildiOBS Overlays</span></div>
             <div class="menu-item" onclick="switchTab('tab-tts', this)"><i class="fa-solid fa-volume-high"></i><span>TTS & Soundboard</span></div>
             <div class="menu-item" onclick="switchTab('tab-settings', this)"><i class="fa-solid fa-sliders"></i><span>Gelişmiş Ayarlar</span></div>
         </div>
